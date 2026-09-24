@@ -17,15 +17,11 @@ public class GlobalExceptionHandler {
     // VALIDATION ERRORS
     // ========================================
 
-    @ExceptionHandler(
-            MethodArgumentNotValidException.class
-    )
-    public ResponseEntity<Map<String, String>>
-    handleValidationException(
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidationException(
             MethodArgumentNotValidException exception) {
 
-        Map<String, String> errors =
-                new HashMap<>();
+        Map<String, String> errors = new HashMap<>();
 
         exception.getBindingResult()
                 .getFieldErrors()
@@ -45,15 +41,11 @@ public class GlobalExceptionHandler {
     // RESOURCE NOT FOUND
     // ========================================
 
-    @ExceptionHandler(
-            ResourceNotFoundException.class
-    )
-    public ResponseEntity<Map<String, String>>
-    handleResourceNotFound(
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleResourceNotFound(
             ResourceNotFoundException exception) {
 
-        Map<String, String> response =
-                new HashMap<>();
+        Map<String, String> response = new HashMap<>();
 
         response.put(
                 "message",
@@ -70,22 +62,21 @@ public class GlobalExceptionHandler {
     // ========================================
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>>
-    handleGeneralException(
+    public ResponseEntity<Map<String, String>> handleGeneralException(
             Exception exception) {
 
-        Map<String, String> response =
-                new HashMap<>();
+        // Print the real error in the Spring Boot terminal
+        exception.printStackTrace();
+
+        Map<String, String> response = new HashMap<>();
 
         response.put(
                 "message",
-                "Something went wrong"
+                exception.getMessage()
         );
 
         return ResponseEntity
-                .status(
-                        HttpStatus.INTERNAL_SERVER_ERROR
-                )
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(response);
     }
 }

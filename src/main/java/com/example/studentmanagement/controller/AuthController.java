@@ -31,8 +31,7 @@ public class AuthController {
     // ========================================
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse>
-    register(
+    public ResponseEntity<ApiResponse> register(
             @Valid @RequestBody User user) {
 
         String message =
@@ -40,9 +39,7 @@ public class AuthController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(
-                        new ApiResponse(message)
-                );
+                .body(new ApiResponse(message));
     }
 
     // ========================================
@@ -50,10 +47,8 @@ public class AuthController {
     // ========================================
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>>
-    login(
-            @Valid @RequestBody
-            LoginRequest request) {
+    public ResponseEntity<Map<String, String>> login(
+            @Valid @RequestBody LoginRequest request) {
 
         String token =
                 authService.login(
@@ -67,6 +62,27 @@ public class AuthController {
                         "Login successful",
                         "token",
                         token
+                )
+        );
+    }
+
+    // ========================================
+    // TEMPORARY PASSWORD RESET
+    // ========================================
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<ApiResponse> resetPassword(
+            @RequestParam String email,
+            @RequestParam String password) {
+
+        authService.resetPassword(
+                email,
+                password
+        );
+
+        return ResponseEntity.ok(
+                new ApiResponse(
+                        "Password reset successfully"
                 )
         );
     }

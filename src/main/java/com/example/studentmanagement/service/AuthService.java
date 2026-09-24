@@ -21,14 +21,9 @@ public class AuthService {
             PasswordEncoder passwordEncoder,
             JwtService jwtService) {
 
-        this.userRepository =
-                userRepository;
-
-        this.passwordEncoder =
-                passwordEncoder;
-
-        this.jwtService =
-                jwtService;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     // ========================================
@@ -42,11 +37,7 @@ public class AuthService {
                         .trim()
                         .toLowerCase();
 
-        if (
-                userRepository
-                        .findByEmail(email)
-                        .isPresent()
-        ) {
+        if (userRepository.findByEmail(email).isPresent()) {
 
             throw new RuntimeException(
                     "Email already registered"
@@ -61,6 +52,7 @@ public class AuthService {
                 )
         );
 
+        // Every newly registered user is USER
         user.setRole("USER");
 
         userRepository.save(user);
@@ -89,12 +81,9 @@ public class AuthService {
                                 )
                         );
 
-        if (
-                !passwordEncoder.matches(
-                        password,
-                        user.getPassword()
-                )
-        ) {
+        if (!passwordEncoder.matches(
+                password,
+                user.getPassword())) {
 
             throw new RuntimeException(
                     "Invalid email or password"
@@ -104,5 +93,34 @@ public class AuthService {
         return jwtService.generateToken(
                 user.getEmail()
         );
+    }
+
+    // ========================================
+    // RESET PASSWORD
+    // ========================================
+
+    public void resetPassword(
+            String email,
+            String newPassword) {
+
+        User user =
+                userRepository
+                        .findByEmail(
+                                email
+                                        .trim()
+                                        .toLowerCase()
+                        )
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "User not found"
+                                )
+                        );
+
+        // Encrypt the new password using BCrypt
+        user.setPassword(
+                passwordEncoder.encode(newPassword)
+        );
+
+        userRepository.save(user);
     }
 }
